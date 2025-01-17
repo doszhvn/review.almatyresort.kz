@@ -1,0 +1,1 @@
+<button id="redirect2gisButton" type="button" class="btn btn-primary" style="background-color: #A58836; border: none;" onclick="window.location.href='https://2gis.kz/almaty/geo/9429940000870118';">Оставить отзыв в 2GIS</button>

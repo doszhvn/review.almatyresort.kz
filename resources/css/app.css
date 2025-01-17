@@ -1,0 +1,34 @@
+header {
+    background-color: #A58836;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+header img {
+    max-width: 150px;
+    margin-bottom: 1rem;
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+footer {
+    position: relative; /* Убедитесь, что он не absolute или fixed */
+    bottom: 0; /* Если всё же используете absolute */
+    width: 100%; /* Занимает всю ширину экрана */
+}
+
+body {
+    min-height: 100vh; /* Убедитесь, что тело страницы занимает всю высоту экрана */
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1; /* Контент занимает оставшееся пространство */
+}
