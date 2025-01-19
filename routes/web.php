@@ -16,5 +16,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/review', [\App\Http\Controllers\ReviewController::class, 'index'])->name('review.index');
-Route::get('/review/success', [\App\Http\Controllers\ReviewController::class, 'success'])->name('review.success');
+Route::get('/review/{branch_slug}', [\App\Http\Controllers\ReviewController::class, 'index'])->name('review.index');

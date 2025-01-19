@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enum\BranchEnum;
 use App\Enum\ReviewReasonEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,6 +24,12 @@ class ReviewRequest extends FormRequest
     public function rules()
     {
         return [
+            'branch_id' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:' . count(BranchEnum::toArray()), // максимальное значение равно количеству элементов в Enum
+            ],
             'rating' => 'required|integer|min:1|max:5', // Проверка на рейтинг
             'reason_id' => [
                 'nullable',

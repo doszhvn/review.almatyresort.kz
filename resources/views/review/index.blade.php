@@ -8,12 +8,12 @@
                 <img src="{{ asset('assets/images/logo.png') }}" alt="Almaty Resort" class="mb-3 mx-auto" style="max-width: 150px;">
 
                 <!-- Заголовок -->
-                <h1 class="mb-0 text-uppercase" style="font-size: 24px; font-weight: bold;">Отзывы Almaty Resort</h1>
+                <h1 class="mb-0 text-uppercase" style="font-size: 24px; font-weight: bold;">Отзывы {{$branch_name}}</h1>
             </div>
         </header>
     </header>
     <div class="container mt-5">
-        <div class="">
+        <div id="mainContainer" class="">
             <div class="mb-3">Оцените нас !</div>
                 <!-- Звездный рейтинг -->
                 <form id="reviewForm" class="container card" method="POST">
@@ -45,7 +45,17 @@
                             <input type="text" name="name" class="form-control" placeholder="Имя">
                         </div>
                         <div class="mb-3">
-                            <input type="text" name="phone" class="form-control" placeholder="Телефон">
+                            <div class="input-group">
+                                <span class="input-group-text">+7</span>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    class="form-control"
+                                    placeholder="(XXX) XXX-XX-XX"
+                                    maxlength="15"
+                                    pattern="\(\d{3}\) \d{3}-\d{2}-\d{2}"
+                                    oninput="formatPhoneNumber(this)">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <textarea name="review" class="form-control" rows="3" placeholder="Оставить отзыв..."></textarea>
@@ -59,6 +69,31 @@
     </div>
 
     <script>
+        function formatPhoneNumber(input) {
+            // Убираем все символы, кроме цифр
+            let numbers = input.value.replace(/\D/g, '');
+
+            // Ограничиваем ввод до 10 цифр
+            numbers = numbers.slice(0, 10);
+
+            // Форматируем в виде (XXX) XXX-XX-XX
+            let formatted = '';
+            if (numbers.length > 0) {
+                formatted = '(' + numbers.slice(0, 3);
+            }
+            if (numbers.length >= 4) {
+                formatted += ') ' + numbers.slice(3, 6);
+            }
+            if (numbers.length >= 7) {
+                formatted += '-' + numbers.slice(6, 8);
+            }
+            if (numbers.length >= 9) {
+                formatted += '-' + numbers.slice(8, 10);
+            }
+
+            // Обновляем значение поля ввода
+            input.value = formatted;
+        }
         $(document).ready(function () {
             $('input[name="rating"]').on('change', function () {
                 const selectedStars = $(this).val(); // Получаем значение выбранной звезды
@@ -118,8 +153,9 @@
                 const rating = $('input[name="rating"]:checked').val();
                 const reason_id = $('input[name="reason_id"]:checked').val();
                 const name = $('input[name="name"]').val();
-                const phone = $('input[name="phone"]').val();
                 const review = $('textarea[name="review"]').val();
+                let phone = $('input[name="phone"]').val();
+                phone = `+7 ${phone}`
 
                 // Проверка заполненности обязательных полей
                 if (!rating) {
@@ -132,20 +168,10 @@
                     return;
                 }
 
-                if (rating < 4 && reason_id == "{{ array_key_last($reviewReasons) }}" && (!name || !phone)) {
-                    alert('Пожалуйста, заполните имя и телефон.');
+                if (rating < 4 && reason_id == "{{ array_key_last($reviewReasons) }}" && (!name || !phone || !review)) {
+                    alert('Пожалуйста, заполните имя, телефон и отзыв.');
                     return;
                 }
-
-                // Если все проверки пройдены, отправляем форму
-                console.log('Форма успешно отправлена!');
-                console.log({
-                    rating,
-                    reason_id,
-                    name,
-                    phone,
-                    review,
-                });
 
                 // Если требуется отправка формы на сервер, используем Ajax
                 $.ajax({
@@ -153,6 +179,7 @@
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}', // CSRF-токен
+                        branch_id : {{$branch_id}},
                         rating,
                         reason_id,
                         name,
@@ -161,7 +188,13 @@
                     },
                     success: function (response) {
                         if(response.success){
-                            $('#buttonArea').html(response.success_view);
+                            if(response.is_redirect){
+                                $('input[name="rating"]').prop('disabled', true);
+                                $('#buttonArea').html(response.success_view);
+                            } else {
+                                $('#mainContainer').html(response.success_view);
+
+                            }
                         }
                         // Здесь вы можете выполнить дополнительные действия после успешной отправки
                     },
