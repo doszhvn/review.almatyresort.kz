@@ -6,7 +6,7 @@ services:
             - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
 
         ports:
-            -   "8000:80"
+            -   "${NGINX_PORT}:80"
         container_name: ${APP_NAME}_nginx
         depends_on:
             - app

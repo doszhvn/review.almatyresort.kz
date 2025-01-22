@@ -13,7 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/admin', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('admin.index');
 Route::get('/review/{branch_slug}', [\App\Http\Controllers\ReviewController::class, 'index'])->name('review.index');

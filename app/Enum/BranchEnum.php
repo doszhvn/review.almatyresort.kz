@@ -6,7 +6,7 @@ enum BranchEnum : string
 {
     case ALMATY_RESORT = 'Almaty Resort';
     case ALMATY_RESORT_SLUG = 'almaty-resort';
-    case OQZHETPES = 'Oqzhetpes';
+    case OQZHETPES = 'Okzhetpes.borovoe';
     case OQZHETPES_SLUG = 'oqzhetpes';
     public static function toArray(): array
     {

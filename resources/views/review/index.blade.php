@@ -68,6 +68,12 @@
         </div>
     </div>
 
+{{--    <footer class="bg-dark text-white py-4 mt-auto">--}}
+{{--        <div class="container text-center">--}}
+{{--            <p>&copy; {{ date('Y') }} Almaty Resort. Все права защищены.</p>--}}
+{{--        </div>--}}
+{{--    </footer>--}}
+
     <script>
         function formatPhoneNumber(input) {
             // Убираем все символы, кроме цифр
@@ -200,7 +206,6 @@
                     },
                     error: function (error) {
                         alert('Произошла ошибка при отправке отзыва.');
-                        console.error(error);
                     }
                 });
             });

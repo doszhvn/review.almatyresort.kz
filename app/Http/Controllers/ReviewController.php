@@ -64,4 +64,39 @@ class ReviewController extends Controller
             ], 500);
         }
     }
+
+    public function statistics()
+    {
+        return Review::select([
+            'branch_id',
+            DB::raw("DATE_FORMAT(created_at, '%m.%Y') as month_year"), // Форматируем дату
+            'reason_id',
+            'rating',
+            DB::raw('COUNT(*) as count') // Считаем количество записей
+        ])
+            ->groupBy('branch_id', 'month_year', 'reason_id', 'rating') // Группируем по branch_id, месяцам, reason_id и rating
+            ->get()
+            ->groupBy('branch_id') // Сначала группируем по branch_id
+            ->mapWithKeys(function ($items, $branchId) {
+                return [
+                    BranchEnum::toArray()[$branchId - 1] => $items->groupBy('month_year') // Затем группируем по month_year
+                    ->mapWithKeys(function ($itemsByMonth, $monthYear) {
+                        return [
+                            $monthYear => $itemsByMonth->groupBy('reason_id') // Группируем по reason_id
+                            ->mapWithKeys(function ($ratings, $reasonId) {
+                                return [
+                                    $reasonId ? ReviewReasonEnum::toArray()[$reasonId]->name : "no_branch" => $ratings->mapWithKeys(function ($item) {
+                                        return [
+                                            "rating_{$item->rating}" => [
+                                                'count' => $item->count
+                                            ]
+                                        ];
+                                    })
+                                ];
+                            })
+                        ];
+                    })
+                ];
+            });
+    }
 }
