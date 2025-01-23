@@ -5,7 +5,7 @@
         <header class="py-3" style="background-color: #A58836; color: #fff;">
             <div class="container text-center">
                 <!-- Логотип -->
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Almaty Resort" class="mb-3 mx-auto" style="max-width: 150px;">
+                <img src="{{ $branch_logo }}" alt="Almaty Resort" class="mb-3 mx-auto" style="max-width: 150px;">
 
                 <!-- Заголовок -->
                 <h1 class="mb-0 text-uppercase" style="font-size: 24px; font-weight: bold;">Отзывы {{$branch_name}}</h1>
@@ -62,7 +62,16 @@
                         </div>
                     </div>
                     <div id="buttonArea" class="mb-3 mt-3">
-                        <button type="submit" class="btn btn-primary" style="background-color: #A58836; border: none;">Отправить</button>
+                        <button id="formSubmitButton" type="submit" class="btn btn-primary" style="background-color: #A58836; border: none;">Отправить</button>
+                        <button
+                            id="redirect2gisButton"
+                            type="button"
+                            class="btn btn-primary d-none"
+                            style="background-color: #A58836;
+                            border: none;"
+                            onclick="window.location.href='{{$branch_map_url}}';">
+                            Оставить отзыв в 2GIS
+                        </button>
                     </div>
                 </form>
         </div>
@@ -196,7 +205,8 @@
                         if(response.success){
                             if(response.is_redirect){
                                 $('input[name="rating"]').prop('disabled', true);
-                                $('#buttonArea').html(response.success_view);
+                                $('#redirect2gisButton').removeClass('d-none');
+                                $('#formSubmitButton').addClass('d-none');
                             } else {
                                 $('#mainContainer').html(response.success_view);
 

@@ -18,8 +18,10 @@ class ReviewController extends Controller
         $branch_id = BranchEnum::getId($branch_slug);
         if($branch_id){
             $branch_name = BranchEnum::slugToName()[$branch_slug];
+            $branch_map_url = BranchEnum::getMapUrl($branch_slug);
+            $branch_logo = BranchEnum::getLogo($branch_slug);
             $reviewReasons = ReviewReasonEnum::toArray();
-            return view('review.index', compact('reviewReasons', 'branch_name', 'branch_id'));
+            return view('review.index', compact('reviewReasons', 'branch_name', 'branch_id', 'branch_map_url', 'branch_logo'));
         } else {
             abort(404);
         }
@@ -50,11 +52,7 @@ class ReviewController extends Controller
             return response()->json([
                     'success' => true,
                     'is_redirect' => $data['rating'] > 3,
-                    'success_view' => view(
-                        $data['rating'] > 3
-                        ? 'review.parts.redirect2gisbutton'
-                        : 'review.parts.success'
-                    )->render(),
+                    'success_view' => view('review.parts.success')->render(),
                 ]);
         } catch (\Exception $e) {
             DB::rollBack();
