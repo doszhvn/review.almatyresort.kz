@@ -41,7 +41,7 @@
                                     </label>
                                 </li>
                                 <div id="reasonUpgradeField_{{ $id }}" class="mb-3 d-none reasonUpgradeField" >
-                                    <textarea name="upgradeField" class="form-control" rows="3" placeholder="Расскажите что можно улучшить"></textarea>
+                                    <textarea name="upgradeField" class="form-control" rows="3" placeholder="Расскажите, что можно улучшить"></textarea>
                                 </div>
                             @endforeach
                         </ul>
