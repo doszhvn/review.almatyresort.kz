@@ -37,6 +37,7 @@ class ReviewRequest extends FormRequest
                 'min:0',
                 'max:' . count(ReviewReasonEnum::toArray())-1, // максимальное значение равно количеству элементов в Enum
             ],
+            'upgradeField' => 'nullable|string|max:1000',
             'name' => 'nullable|string|max:255', // Имя (опционально, если выбрана последняя причина)
             'phone' => 'nullable|string|max:20', // Телефон (опционально, если выбрана последняя причина)
             'review' => 'nullable|string|max:1000', // Отзыв

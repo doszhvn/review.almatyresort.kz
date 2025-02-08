@@ -28,6 +28,9 @@
                             </label>
                         @endfor
                     </div>
+                    <div id="upgradeField" class="mb-3 d-none">
+                        <textarea name="upgradeField" class="form-control" rows="3" placeholder="Может что то можно сделать лучше..."></textarea>
+                    </div>
                     <div id="reasonArea" class="d-none">
                         <ul class="list-unstyled">
                             @foreach($reviewReasons as $id => $reason)
@@ -37,6 +40,9 @@
                                         {{ $reason }}
                                     </label>
                                 </li>
+                                <div id="reasonUpgradeField_{{ $id }}" class="mb-3 d-none reasonUpgradeField" >
+                                    <textarea name="upgradeField" class="form-control" rows="3" placeholder="Расскажите что можно улучшить"></textarea>
+                                </div>
                             @endforeach
                         </ul>
                     </div>
@@ -112,7 +118,6 @@
         $(document).ready(function () {
             $('input[name="rating"]').on('change', function () {
                 const selectedStars = $(this).val(); // Получаем значение выбранной звезды
-                console.log(`Вы выбрали ${selectedStars} звезд`);
 
                 // Сброс всех звезд к изначальному цвету
                 $('.star-svg').removeClass('text-warning').addClass('text-secondary');
@@ -129,11 +134,16 @@
                     $('#reasonArea').removeClass('d-none');
                     // Удаляем required у полей внутри reportFormArea
                     $('#reportFormArea').addClass('d-none').find('input, textarea').prop('required', false);
+
+                    $('#upgradeField').addClass('d-none').find('input, textarea').prop('required', false).val('');
                 } else {
                     // Если 4 или больше звезд, скрываем reasonArea и reportFormArea
                     $('#reasonArea').addClass('d-none').find('input, textarea').prop('required', false);
                     $('#reasonArea input[type="radio"]').prop('checked', false); // Сбрасываем выбор в reasonArea
                     $('#reportFormArea').addClass('d-none').find('input, textarea').prop('required', false);
+
+                    $('#upgradeField').removeClass('d-none').find('input, textarea').prop('required', true);
+                    $('.reasonUpgradeField').addClass('d-none').find('input, textarea').prop('required', false).val('');
                 }
             });
 
@@ -141,23 +151,14 @@
                 const selectedReason = $(this).val(); // Получаем значение выбранной причины
 
                 if ($('input[name="rating"]:checked').val() < 4 && selectedReason === "{{ array_key_last($reviewReasons) }}") {
-                    // Показываем reportFormArea и добавляем required
                     $('#reportFormArea').removeClass('d-none').find('input, textarea').prop('required', true);
+                    $('.reasonUpgradeField').addClass('d-none').find('input, textarea').prop('required', false).val('');
                 } else {
                     // Скрываем reportFormArea и убираем required
                     $('#reportFormArea').addClass('d-none').find('input, textarea').prop('required', false);
-                }
-            });
 
-            $('input[name="reason_id"]').on('change', function () {
-                const selectedReason = $(this).val(); // Получаем значение выбранной причины
-
-                // Если выбрана последняя причина, показываем reportFormArea
-                if ($('input[name="rating"]:checked').val() < 4 && selectedReason === "{{ array_key_last($reviewReasons) }}") {
-                    $('#reportFormArea').removeClass('d-none').find('input, textarea').prop('required', true);
-                } else {
-                    // В других случаях скрываем reportFormArea
-                    $('#reportFormArea').addClass('d-none').find('input, textarea').prop('required', false);
+                    $('.reasonUpgradeField').addClass('d-none').find('input, textarea').prop('required', false).val('');
+                    $('#reasonUpgradeField_'+selectedReason).removeClass('d-none').find('input, textarea').prop('required', true);
                 }
             });
 
@@ -172,6 +173,11 @@
                 let phone = $('input[name="phone"]').val();
                 phone = `+7 ${phone}`
 
+                const upgradeFields = $('textarea[name="upgradeField"]').map(function() {
+                    return $(this).val().trim();
+                }).get().filter(value => value !== "");
+
+                const upgradeField = upgradeFields.join("\n");
                 // Проверка заполненности обязательных полей
                 if (!rating) {
                     alert('Пожалуйста, выберите количество звезд.');
@@ -193,13 +199,14 @@
                     url: "{{route('review.create')}}", // Получаем URL из атрибута action
                     method: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}', // CSRF-токен
+                        {{--_token: '{{ csrf_token() }}', // CSRF-токен--}}
                         branch_id : {{$branch_id}},
                         rating,
                         reason_id,
                         name,
                         phone,
                         review,
+                        upgradeField,
                     },
                     success: function (response) {
                         if(response.success){

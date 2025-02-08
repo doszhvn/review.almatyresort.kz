@@ -38,6 +38,7 @@ class ReviewController extends Controller
                 'branch_id' => $data['branch_id'],
                 'rating' => $data['rating'],
                 'reason_id' => $data['rating'] < 4 ? $data['reason_id'] : null,
+                'upgradeField' => $data['upgradeField'],
             ]);
             if ($review->reason_id == array_key_last(ReviewReasonEnum::toArray())) {
                 ReviewForm::create([
