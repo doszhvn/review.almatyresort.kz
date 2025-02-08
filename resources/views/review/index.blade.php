@@ -29,7 +29,7 @@
                         @endfor
                     </div>
                     <div id="upgradeField" class="mb-3 d-none">
-                        <textarea name="upgradeField" class="form-control" rows="3" placeholder="Может что то можно сделать лучше..."></textarea>
+                        <textarea name="upgradeField" class="form-control" rows="3" placeholder="Может, есть что-то, что можно сделать лучше..."></textarea>
                     </div>
                     <div id="reasonArea" class="d-none">
                         <ul class="list-unstyled">
