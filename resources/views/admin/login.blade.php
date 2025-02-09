@@ -36,12 +36,6 @@
                 </div>
                 <!--begin::Row-->
                 <div class="row">
-                    <div class="col-8 d-inline-flex align-items-center">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault"> Запомнить меня </label>
-                        </div>
-                    </div>
                     <!-- /.col -->
                     <div class="col-4">
                         <div class="d-grid gap-2">
@@ -108,23 +102,51 @@
         }
     });
     $(document).ready(function () {
+
         $("#loginForm").on('submit', function (event) {
             event.preventDefault();
             $.ajax({
-                url: "{{route('login')}}", // Получаем URL из атрибута action
+                url: "{{route('api.login')}}", // Получаем URL из атрибута action
                 method: 'POST',
+                xhrFields: {
+                    withCredentials: true
+                },
                 data: $(this).serialize(),
                 success: function (response) {
-                    console.log(localStorage.getItem('auth_token'))
                     localStorage.setItem('auth_token', response.access_token);
-                    // location.reload();
+                    window.location.href = "{{ route('admin.index') }}"
                 },
                 error: function (error) {
                 }
             });
         });
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                const token = localStorage.getItem('auth_token');
+                if (token) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                }
+            }
+        });
+
+        function checkAuthStatus() {
+            let token = localStorage.getItem('auth_token')
+            if (token) {
+                $.ajax({
+                    url: "{{route('api.me')}}", // Получаем URL из атрибута action
+                    method: 'POST',
+                    success: function (response) {
+                        window.location.href = "{{ route('admin.index') }}"
+                    },
+                    error: function (error) {
+                    }
+                });
+            }
+        }
+        checkAuthStatus();
     });
 </script>
+
 <!--end::OverlayScrollbars Configure-->
 <!--end::Script-->
 </body>

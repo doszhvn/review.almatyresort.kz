@@ -13,5 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/admin', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('admin.index');
+Route::get('/login', [\App\Http\Controllers\AuthController::class, 'index'])->name('login');
 Route::get('/review/{branch_slug}', [\App\Http\Controllers\ReviewController::class, 'index'])->name('review.index');
+
+Route::group(['prefix' => '/admin'], function () {
+    Route::get('/', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('admin.index');
+    Route::get('/reviews/{branch_slug}', [\App\Http\Controllers\Admin\AdminController::class, 'review_list'])->name('review.list');
+    Route::get('/reports/{branch_slug}', [\App\Http\Controllers\Admin\AdminController::class, 'director_reports'])->name('reports.list');
+});

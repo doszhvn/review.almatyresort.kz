@@ -32,16 +32,20 @@
         <!--begin::Sidebar Brand-->
         <div class="sidebar-brand">
             <!--begin::Brand Link-->
-            <a href="./index.html" class="brand-link">
+            <a href="{{route('admin.index')}}" class="brand-link">
                 <!--begin::Brand Image-->
                 <img
                     src="{{ asset('assets/images/logo.png') }}"
-                    alt="AdminLTE Logo"
+                    alt="Logo"
                     class="brand-image opacity-75 shadow"
                 />
                 <!--end::Brand Image-->
                 <!--begin::Brand Text-->
-                <span class="brand-text fw-light">Almaty Resort</span>
+                <img
+                    src="{{ asset('assets/images/oqzhetpes-logo.png') }}"
+                    alt="Logo"
+                    class="brand-image opacity-75 shadow"
+                />
                 <!--end::Brand Text-->
             </a>
             <!--end::Brand Link-->
@@ -255,7 +259,35 @@
 
     const pie_chart = new ApexCharts(document.querySelector('#pie-chart'), pie_chart_options);
     pie_chart.render();
+    $(document).ready(function () {
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                const token = localStorage.getItem('auth_token');
+                if (token) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                }
+            }
+        });
 
+        function checkAuthStatus() {
+            let token = localStorage.getItem('auth_token')
+            if (token) {
+                $.ajax({
+                    url: "{{route('api.me')}}", // Получаем URL из атрибута action
+                    method: 'POST',
+                    success: function (response) {
+                    },
+                    error: function (error) {
+                        window.location.href = "{{ route('login') }}"
+                    }
+                });
+            } else {
+                window.location.href = "{{ route('login') }}"
+            }
+        }
+
+        checkAuthStatus();
+    });
     //-----------------
     // - END PIE CHART -
     //-----------------
